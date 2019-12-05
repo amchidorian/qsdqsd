@@ -1,7 +1,7 @@
 <template>
   <div>
-    <div class="md-layout md-gutter">
-      <div class="md-layout-item md-size-25">
+    <div class="md-layout md-gutter" style="margin-left:20px; margin-right:20px; ">
+      <div class="md-layout-item  md-size-20 md-medium-size-25 md-small-size-50 md-xsmall-size-100">
         <md-field>
           <label for="vertical">Recherche par Restriction</label>
           <md-select>
@@ -12,7 +12,7 @@
         </md-field>
       </div>
 
-      <div class="md-layout-item md-size-25">
+      <div class="md-layout-item  md-size-20 md-medium-size-25 md-small-size-50 md-xsmall-size-100">
         <md-field>
           <label for="horizontal">Recherche par Store</label>
           <md-select>
@@ -26,7 +26,7 @@
       </div>
     </div>
 
-    <div class="example">
+    <div>
       <div class="md-layout md-gutter">
         <div
           class="md-layout-item  md-size-20 md-medium-size-25 md-small-size-50 md-xsmall-size-100"

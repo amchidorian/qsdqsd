@@ -2,8 +2,8 @@
 /* eslint-disable guard-for-in */
 import store from "../mainStore.js";
 
-export default function(err, uri) {
-  console.log(uri);
+export default function(err) {
+  console.log(err);
   if (err.response.status === 401) {
     store.dispatch("authService/unauthorized");
   }

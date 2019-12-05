@@ -2,11 +2,11 @@
   <div>
     <md-tabs md-alignment="centered" style="margin-bottom:20px;">
       <md-tab
-        :md-label="'Applications Playstore (' + 3 + ')'"
+        :md-label="'Applications Playstore (' + playApps.length + ')'"
         @click="tab = 'play'"
       ></md-tab>
       <md-tab
-        :md-label="'Applications Playstore (' + 6 + ')'"
+        :md-label="'Applications Playstore (' + webApps.length + ')'"
         @click="tab = 'web'"
       ></md-tab>
     </md-tabs>
