@@ -48,9 +48,8 @@
       </div>
     </div>
     <div class="policyGlobal" v-if="tab == 'gen'">
-      <div class="md-layout md-gutter">
-        <div class="md-layout-item md-size-15"></div>
-        <div class="md-layout-item md-size-75">
+      <div class="md-layout md-gutter" style="margin:40px;">
+        <div class="md-layout-item md-size-100">
           <md-field style="padding-top:0;">
             <label class="specTitle">Système</label>
             <md-input disabled></md-input>
@@ -63,9 +62,8 @@
         :displayInfosSup="displayInfosSup"
         :updateMode="updateMode"
       />
-      <div class="md-layout md-gutter">
-        <div class="md-layout-item md-size-15"></div>
-        <div class="md-layout-item md-size-75">
+      <div class="md-layout md-gutter" style="margin:40px;">
+        <div class="md-layout-item md-size-100">
           <md-field>
             <label class="specTitle">Périphériques</label>
             <md-input disabled></md-input>
@@ -78,9 +76,8 @@
         :displayInfosSup="displayInfosSup"
         :updateMode="updateMode"
       />
-      <div class="md-layout md-gutter">
-        <div class="md-layout-item md-size-15"></div>
-        <div class="md-layout-item md-size-75">
+      <div class="md-layout md-gutter" style="margin:40px;">
+        <div class="md-layout-item md-size-100">
           <md-field>
             <label class="specTitle">Réseaux</label>
             <md-input disabled></md-input>
@@ -93,9 +90,8 @@
         :displayInfosSup="displayInfosSup"
         :updateMode="updateMode"
       />
-      <div class="md-layout md-gutter">
-        <div class="md-layout-item md-size-15"></div>
-        <div class="md-layout-item md-size-75">
+      <div class="md-layout md-gutter" style="margin:40px;">
+        <div class="md-layout-item md-size-100">
           <md-field>
             <label class="specTitle">Applications du PlayStore</label>
             <md-input disabled></md-input>
@@ -107,9 +103,8 @@
         :apps="others.applications.value.play"
         :updateMode="updateMode"
       />
-      <div class="md-layout md-gutter">
-        <div class="md-layout-item md-size-15"></div>
-        <div class="md-layout-item md-size-75">
+      <div class="md-layout md-gutter" style="margin:40px;">
+        <div class="md-layout-item md-size-100">
           <md-field>
             <label class="specTitle">Applications Web</label>
             <md-input disabled></md-input>
@@ -123,9 +118,8 @@
       />
     </div>
     <div class="policyGlobal" v-if="tab == 'spe'">
-      <div class="md-layout md-gutter">
-        <div class="md-layout-item md-size-15"></div>
-        <div class="md-layout-item md-size-75">
+      <div class="md-layout md-gutter" style="margin:40px;">
+        <div class="md-layout-item md-size-100">
           <md-field style="padding-top:0;">
             <label class="specTitle">Sécurité / Vérouillage</label>
             <md-input disabled></md-input>
@@ -133,9 +127,8 @@
           <PasswordSpec :requirements="others.passwordRequirements.value" />
         </div>
       </div>
-      <div class="md-layout md-gutter">
-        <div class="md-layout-item md-size-15"></div>
-        <div class="md-layout-item md-size-75">
+      <div class="md-layout md-gutter" style="margin:40px;">
+        <div class="md-layout-item md-size-100">
           <md-field style="padding-top:0;">
             <label class="specTitle">Règles de Conformité</label>
             <md-input disabled></md-input>
@@ -146,9 +139,8 @@
           />
         </div>
       </div>
-      <div class="md-layout md-gutter">
-        <div class="md-layout-item md-size-15"></div>
-        <div class="md-layout-item md-size-75">
+      <div class="md-layout md-gutter" style="margin:40px;">
+        <div class="md-layout-item md-size-100">
           <md-field style="padding-top:0;">
             <label class="specTitle">Gestion des Permissions</label>
             <md-input disabled></md-input>
@@ -161,16 +153,21 @@
         </div>
       </div>
     </div>
+    <button
+      id="refreshGroupeBtn"
+      v-on:click="getGroup"
+      style="display:none;"
+    ></button>
   </div>
 </template>
 
 <script>
+import { groupeService } from "../_services/groupe.service";
 import PolicySpec from "../components/policy/specsRow/PolicySpec";
 import PermissionSpec from "../components/policy/specsRow/PermissionSpec";
 import ComplianceSpec from "../components/policy/specsRow/ComplianceSpec";
 import PasswordSpec from "../components/policy/specsRow/PasswordSpec";
 import ApplicationSpec from "../components/policy/specsRow/ApplicationSpec";
-import { mapGetters } from "vuex";
 
 export default {
   name: "Policy",
@@ -194,24 +191,28 @@ export default {
         { name: "Sécurité", id: "secu" },
         { name: "Règles Conformité", id: "compliance" },
         { name: "Permissions", id: "permissions" }
-      ]
+      ],
+      policy: [],
+      phone: [],
+      network: [],
+      system: [],
+      apps: [],
+      others: []
     };
   },
-  computed: {
-    ...mapGetters({
-      policy: "policyService/get_policy",
-      phone: "policyService/get_policy_phone",
-      network: "policyService/get_policy_network",
-      system: "policyService/get_policy_system",
-      apps: "policyService/get_policy_apps",
-      others: "policyService/get_policy_others"
-    })
-  },
+  computed: {},
   beforeCreate() {
-    this.$store.dispatch(
-      "policyService/getPolicy",
-      this.$router.history.current.params.id
-    );
+    groupeService
+      .getGroupe(this.$router.history.current.params.id)
+      .then(res => {
+        console.log("groupeService getGroupe");
+        this.policy = res.policy;
+        this.phone = res.phone;
+        this.network = res.network;
+        this.system = res.system;
+        this.apps = res.apps;
+        this.others = res.others;
+      });
   },
   methods: {
     updatePolicy() {
@@ -219,19 +220,33 @@ export default {
         phone: { ...this.phone },
         network: { ...this.network },
         system: { ...this.system },
-        apps: { ...this.apps }
+        apps: { ...this.others.applications.value }
       };
-      this.$store.dispatch("policyService/updatePolicy", {
-        id: this.$router.history.current.params.id,
-        policy: p
-      });
+      groupeService
+        .updateGroupe({
+          id: this.$router.history.current.params.id,
+          data: p
+        })
+        .then(res => {
+          console.log("groupeService updateGroupe");
+          this.getGroup();
+        });
       this.updateMode = false;
     },
+    getGroup() {
+      groupeService
+        .getGroupe(this.$router.history.current.params.id)
+        .then(res => {
+          this.policy = res.policy;
+          this.phone = res.phone;
+          this.network = res.network;
+          this.system = res.system;
+          this.apps = res.apps;
+          this.others = res.others;
+        });
+    },
     cancelUpdatePolicy() {
-      this.$store.dispatch(
-        "policyService/getPolicy",
-        this.$router.history.current.params.id
-      );
+      this.getGroup();
       this.updateMode = false;
     }
   }

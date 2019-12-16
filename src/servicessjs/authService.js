@@ -10,10 +10,16 @@ export const authService = {
       type: Boolean,
       required: true,
       default: false
+    },
+    isVerified: {
+      type: Boolean,
+      required: true,
+      default: false
     }
   },
   mutations: {
     LOG_USER(state, { userData }) {
+      state.isLogged = false;
       httpRequest("auth/login", "POST", userData)
         .then(response => {
           localStorage.setItem("token", response.data.token);
@@ -21,6 +27,18 @@ export const authService = {
         })
         .catch(err => {
           httpRequestError(err, "auth/login");
+        });
+    },
+    CHECK_LOG_USER(state) {
+      httpRequest("auth/check", "GET")
+        .then(response => {
+          console.log("CHECK_LOG_USER response");
+          console.log(response.data);
+          localStorage.setItem("user", response.data);
+          state.isVerified = true;
+        })
+        .catch(err => {
+          httpRequestError(err, "auth/check");
           console.log(err);
         });
     },
@@ -42,7 +60,8 @@ export const authService = {
     }
   },
   getters: {
-    get_is_logged: state => state.isLogged
+    get_is_logged: state => state.isLogged,
+    get_is_verified: state => state.isVerified
   },
   actions: {
     async logUser({ commit }, userData) {
@@ -50,6 +69,10 @@ export const authService = {
     },
     async unauthorized({ commit }) {
       commit("UNAUTHORIZED");
+    },
+    async checkLogUser({ commit }) {
+      console.log("checkLogUser");
+      commit("CHECK_LOG_USER");
     },
     async isLogged({ commit }) {
       console.log("");

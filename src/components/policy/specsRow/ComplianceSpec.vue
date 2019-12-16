@@ -172,7 +172,7 @@
 </template>
 
 <script>
-// import { mapActions, mapState, mapGetters } from "vuex";
+import { groupeService } from "../../../_services/groupe.service";
 
 export default {
   name: "ComplianceSpec",
@@ -221,8 +221,6 @@ export default {
   },
   computed: {
     showError: function(firstErrorType, secondErrorType = false) {
-      console.log("showError");
-      console.log(this.error[firstErrorType]);
       if (this.error[firstErrorType] || this.error[secondErrorType]) {
         return "md-invalid";
       } else {
@@ -244,7 +242,6 @@ export default {
   },
   methods: {
     cancelError(errorName) {
-      console.log("cancelError");
       if (errorName === "name") {
         this.error.name = false;
       } else if (errorName === "block") {
@@ -276,10 +273,7 @@ export default {
       });
     },
     cancelUpdate() {
-      this.$store.dispatch(
-        "policyService/getPolicy",
-        this.$router.history.current.params.id
-      );
+      document.getElementById("refreshGroupeBtn").click();
       this.updateIndex = null;
     },
     updateMode(index) {
@@ -292,11 +286,15 @@ export default {
         }
       }
     },
-    deleteCompliance(name) {
-      this.$store.dispatch("policyService/deleteCompliance", {
-        id: this.policyId,
-        name: name
-      });
+    deleteCompliance(complianceName) {
+      groupeService
+        .deleteCompliance({
+          id: this.policyId,
+          name: complianceName
+        })
+        .then(res => {
+          document.getElementById("refreshGroupeBtn").click();
+        });
     },
     cancelCreate() {
       this.newCompliance = {
@@ -339,12 +337,14 @@ export default {
           ? this.compliances[index].wipeAction.wipeAfterDays
           : this.updateData.wipe;
       if (this.updateData.block < this.updateData.wipe) {
-        console.log("this.updateData");
-        console.log(this.updateData);
-        this.$store.dispatch("policyService/updateCompliance", {
-          id: this.policyId,
-          compliance: this.updateData
-        });
+        groupeService
+          .updateCompliance({
+            id: this.policyId,
+            compliance: this.updateData
+          })
+          .then(res => {
+            document.getElementById("refreshGroupeBtn").click();
+          });
         this.updateIndex = null;
         this.resetData();
       } else {
@@ -353,7 +353,6 @@ export default {
     },
     saveCompliance() {
       var errorDetected = false;
-
       for (var i in this.newCompliance) {
         if (this.newCompliance[i] === "") {
           errorDetected = true;
@@ -375,10 +374,14 @@ export default {
         errorDetected = true;
       }
       if (!errorDetected) {
-        this.$store.dispatch("policyService/createCompliance", {
-          id: this.policyId,
-          compliance: this.newCompliance
-        });
+        groupeService
+          .createCompliance({
+            id: this.policyId,
+            compliance: this.newCompliance
+          })
+          .then(res => {
+            document.getElementById("refreshGroupeBtn").click();
+          });
         this.createMode = false;
         this.resetData();
       }

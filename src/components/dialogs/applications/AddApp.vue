@@ -1,27 +1,37 @@
 <template lang="html">
   <div>
-    <md-card md-with-hover style="height:100%;">
+    <md-card
+      md-with-hover
+      style="height:100%; margin-bottom:20px;"
+      v-if="!empty"
+    >
       <md-ripple>
         <div style="height:100%;" @click="showDialog = true">
           <md-card-actions style="height: 100%; width:70%; margin-left: 15%;">
-            <md-icon class="md-size-2x">add</md-icon><br />
+            <md-icon class="md-size-2x">add</md-icon>
             <span
               v-if="type == 'play'"
               class="md-subhead test"
               style="margin-left: 10px;"
-              >Ajouter une Application du PlayStore</span
-            ><span v-else class="md-subhead test" style="margin-left: 10px;"
+              >Ajouter une Application <br />
+              du PlayStore</span
+            ><span v-else class="md-subhead" style="margin-left: 10px;"
               >Ajouter une Application Web</span
             >
           </md-card-actions>
         </div>
       </md-ripple>
     </md-card>
-
+    <md-button
+      v-if="empty"
+      class="md-primary md-layout-item md-size-100"
+      @click="showDialog = true"
+    >
+      Ajouter une Application</md-button
+    >
     <md-dialog
-      class="dialogAddPolicy"
       :md-active.sync="showDialog"
-      @md-closed="close()"
+      v-bind:class="{ avatarCropper: avatarMode }"
     >
       <md-dialog-title v-if="type == 'play'"
         >Ajouter une Application du PlayStore</md-dialog-title
@@ -51,8 +61,10 @@
           </md-field>
         </div>
       </div>
-
       <md-dialog-actions>
+        <md-button class="md-primary">
+          Annuler
+        </md-button>
         <md-button
           v-if="type == 'play'"
           class="md-primary"
@@ -60,41 +72,44 @@
         >
           Créer
         </md-button>
-        <md-button v-else class="md-primary">
-          Créer
-        </md-button>
-        <button :md-ripple="false" id="pick-avatare" class="md-primary">
-          Définir une Icone et créer l'Application
+        <button
+          v-if="type == 'web'"
+          :md-ripple="false"
+          id="pick-avatare"
+          class="md-primary"
+        >
+          <md-button class="md-primary" @click="avatarMode = true">
+            Définir une Icone
+          </md-button>
         </button>
+        <AvatarCropper
+          trigger="#pick-avatare"
+          @uploaded="handleUploaded"
+          @completed="handleCompleted"
+          @error="handlerError"
+          @uploading="handleUploading"
+          :labels="labels"
+          :upload-url="url"
+        />
       </md-dialog-actions>
-      <AvatarCropper
-        trigger="#pick-avatare"
-        @uploaded="handleUploaded"
-        @completed="handleCompleted"
-        @error="handlerError"
-        @uploading="handleUploading"
-        :labels="labels"
-        :upload-url="url"
-      />
     </md-dialog>
   </div>
 </template>
 
 <script>
+import { applicationsService } from "../../../_services/applications.service";
 import AvatarCropper from "vue-avatar-cropper";
 export default {
   name: "AddApp",
   components: { AvatarCropper },
   props: {
-    type: String
+    type: String,
+    empty: String
   },
   data: () => ({
-    url: `http://localhost:8000/api/apps/web?token=${localStorage.getItem(
-      "token"
-    )}`,
-
     showDialog: false,
     error: false,
+    avatarMode: false,
     labels: {
       submit: "Créer l'Application",
       cancel: "Annuler"
@@ -115,33 +130,19 @@ export default {
       this.error = false;
       this.showDialog = false;
     },
-    // validateCreate() {
-    //   this.$store.dispatch("policyService/createPolicy", this.userInput);
-    //   this.$store.dispatch("policiesService/getPolicies");
-    //   this.close();
-    // },
     handleUploading(form) {
-      console.log("name");
-      console.log(this.app.web.name);
-      console.log("source");
-      console.log(this.app.web.source);
       form.append("name", this.app.web.name);
       form.append("source", this.app.web.source);
     },
-    handleUploaded() {
-      console.log("handleUploaded");
-    },
-    handleCompleted() {
-      console.log("handleCompleted");
-    },
-    handlerError() {
-      console.log("handlerError");
-    },
+    handleUploaded() {},
+    handleCompleted() {},
+    handlerError() {},
+    refreshApps() {},
     savePlayStoreApp() {
-      this.$store.dispatch(
-        "applicationService/savePlayStoreApps",
-        this.app.play.source
-      );
+      applicationsService.savePlayStoreApp(this.app.play.source).then(res => {
+        document.getElementById("refreshAppsBtn").click();
+        this.showDialog = false;
+      });
     }
   },
   computed: {
@@ -154,7 +155,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .deleteDeviceWarning {
   background-color: #ffa5006b !important;
   margin-left: 2% !important;
@@ -171,5 +172,9 @@ export default {
   background-color: #d40f0f40 !important;
   padding-top: 10px !important;
   padding-bottom: 10px !important;
+}
+
+.avatarCropper {
+  height: 50% !important;
 }
 </style>

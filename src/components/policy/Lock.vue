@@ -1,7 +1,7 @@
 <template>
   <div>
     <md-list-item v-if="!policyOption.value">
-      <md-tooltip v-if="displayInfosSup" md-direction="right">{{
+      <md-tooltip v-if="displayInfosSup" md-direction="left">{{
         policyOption.infoSup
       }}</md-tooltip>
       <md-icon class="unlockIcon" v-if="!policyOption.updated"
@@ -14,9 +14,9 @@
       <md-tooltip v-if="displayInfosSup" md-direction="left">{{
         policyOption.infoSup
       }}</md-tooltip>
-      <span class="md-list-item-text unlockLabel">{{ policyOption.fr }}</span>
       <md-icon class="lockIcon" v-if="!policyOption.updated">lock</md-icon>
       <md-icon class="updateLockIcon" v-else>lock</md-icon>
+      <span class="md-list-item-text lockLabel">{{ policyOption.fr }}</span>
     </md-list-item>
   </div>
 </template>
@@ -37,11 +37,6 @@ export default {
     },
     displayInfosSup: {
       type: Boolean
-    },
-    updatable: {
-      type: Boolean,
-      required: true,
-      default: false
     }
   }
 };
@@ -54,7 +49,7 @@ export default {
 }
 
 .lockIcon {
-  margin-right: 20px !important;
+  margin-left: 20px !important;
 }
 
 .updateUnlockIcon {
@@ -63,7 +58,7 @@ export default {
 }
 
 .updateLockIcon {
-  margin-right: 20px !important;
+  margin-left: 20px !important;
   color: rgb(82, 82, 179) !important;
 }
 

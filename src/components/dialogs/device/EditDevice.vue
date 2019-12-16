@@ -67,6 +67,7 @@
 </template>
 
 <script>
+import { groupesService } from "../../../_services/groupes.service";
 export default {
   name: "DeleteDevice",
   props: {

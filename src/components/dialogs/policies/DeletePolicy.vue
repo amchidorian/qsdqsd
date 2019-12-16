@@ -44,6 +44,7 @@
 </template>
 
 <script>
+import { groupeService } from "../../../_services/groupe.service";
 export default {
   name: "DeletePolicy",
   props: {
@@ -60,16 +61,19 @@ export default {
   }),
   methods: {
     deletePolicy() {
-      if (this.userInput != this.device.name) {
+      if (this.userInput != this.policy.name) {
         this.error = true;
-        console.log("error");
       } else {
-        console.log("success");
+        groupeService.deleteGroupe(this.policy.name).then(res => {
+          document.getElementById("refreshGroupesBtn").click();
+          this.close();
+        });
       }
     },
     close() {
       this.userInput = "";
       this.error = false;
+      this.showDialog = false;
     }
   },
   computed: {

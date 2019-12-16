@@ -4,7 +4,7 @@
       <md-app-toolbar class="md-primary navHeader" md-elevation="0">
         <md-button
           class="md-icon-button"
-          @click="toggleMenu"
+          @click="menuVisible = true"
           v-if="!menuVisible"
         >
           <md-icon>menu</md-icon>
@@ -21,27 +21,35 @@
           <span>Menu</span>
 
           <div class="md-toolbar-section-end">
-            <md-button class="md-icon-button md-dense" @click="toggleMenu">
+            <md-button
+              class="md-icon-button md-dense"
+              @click="menuVisible = false"
+            >
               <md-icon>keyboard_arrow_left</md-icon>
             </md-button>
           </div>
         </md-toolbar>
 
         <md-list>
-          <md-list-item @click="navigate('Tous les Appareils', '/devices')">
+          <md-list-item
+            :to="'/devices'"
+            @click="changeTitle('Tout les Appareils')"
+          >
             <md-icon>phone_android</md-icon>
             <span class="md-list-item-text">Appareils</span>
           </md-list-item>
 
           <md-list-item
-            @click="navigate('Toutes les Restrictions', '/policies')"
+            :to="'/policies'"
+            @click="changeTitle('Tout les Groupes')"
           >
             <md-icon>lock</md-icon>
             <span class="md-list-item-text">Restrictions</span>
           </md-list-item>
 
           <md-list-item
-            @click="navigate('Toutes les Applications', '/applications')"
+            :to="'/applications'"
+            @click="changeTitle('Toutes les Applications')"
           >
             <md-icon>apps</md-icon>
             <span class="md-list-item-text">Applications</span>
@@ -57,37 +65,22 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
 export default {
   name: "app",
   data: () => ({
     menuVisible: false,
-    title: "Accueil"
+    unauthorized: false
   }),
   methods: {
-    toggleMenu() {},
-    navigate(title, uri) {
-      this.$router.push(uri);
-      this.title = title;
+    changeTitle(newTitle) {
+      localStorage.setItem("appTitle", newTitle);
     }
   },
-  created() {
-    if (!this.isLogged) {
-      this.$router.push("login");
-    }
-  },
+  created() {},
   computed: {
-    ...mapGetters({
-      isLogged: "authService/get_is_logged"
-    })
-  },
-  watch: {
-    isLogged() {
-      if (!this.isLogged) {
-        this.$router.push({ name: "login" });
-      } else if (this.$route.name === "login") {
-        this.$router.push("/");
-      }
+    title: function() {
+      console.log("computed title");
+      return localStorage.getItem("appTitle");
     }
   }
 };

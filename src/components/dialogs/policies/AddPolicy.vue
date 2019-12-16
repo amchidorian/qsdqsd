@@ -1,6 +1,6 @@
 <template lang="html">
   <div>
-    <md-card md-with-hover style="height:100%;">
+    <md-card md-with-hover style="height:100%;" v-if="type == 'notempty'">
       <md-ripple>
         <div style="height:100%;" @click="showDialog = true">
           <md-card-actions style="height: 100%; width:70%; margin-left: 15%;">
@@ -13,6 +13,12 @@
       </md-ripple>
     </md-card>
 
+    <md-button
+      class="md-primary md-raised"
+      v-if="type == 'empty'"
+      @click="showDialog = true"
+      >Ajouter un Groupe</md-button
+    >
     <md-dialog
       class="dialogAddPolicy"
       :md-active.sync="showDialog"
@@ -51,9 +57,12 @@
 </template>
 
 <script>
+import { groupeService } from "../../../_services/groupe.service";
 export default {
   name: "AddPolicy",
-  props: {},
+  props: {
+    type: String
+  },
   data: () => ({
     userInput: "",
     showDialog: false,
@@ -66,9 +75,10 @@ export default {
       this.showDialog = false;
     },
     validateCreate() {
-      this.$store.dispatch("policyService/createPolicy", this.userInput);
-      this.$store.dispatch("policiesService/getPolicies");
-      this.close();
+      groupeService.createGroupe(this.userInput).then(res => {
+        document.getElementById("refreshGroupesBtn").click();
+        this.close();
+      });
     }
   },
   computed: {

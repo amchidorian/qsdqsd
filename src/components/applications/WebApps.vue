@@ -1,12 +1,28 @@
 <template>
   <div class="md-layout md-gutter">
-    <AddApp :type="'web'" />
-    <div
-      class="md-layout-item  md-size-20 md-medium-size-25 md-small-size-50 md-xsmall-size-100 columnPolicies"
-      v-for="(app, index) in apps"
-      :key="index"
+    <md-empty-state
+      md-icon="apps"
+      md-label="Aucune Application Web n'a été enregistré."
+      md-description="En les enregistrant, vous pourrez les assignants à un groupe permettant de les installer automatiquement sur les appareils associés."
+      v-if="apps.length == 0"
     >
-      <ApplicationsWebAppCard :app="app" />
+      <AddApp style="height: 100%;" :empty="true" :type="'web'" />
+    </md-empty-state>
+    <div
+      class="md-layout md-gutter md-layout-item md-size-100 "
+      v-if="apps.length > 0"
+    >
+      <AddApp :type="'web'" :empty="false" md-dynamic-height />
+      <div
+        class="md-layout-item md-size-20 md-medium-size-20 md-small-size-50 md-xsmall-size-100 columnPolicies"
+        v-for="(app, index) in apps"
+        :key="index"
+      >
+        <ApplicationsWebAppCard
+          :app="app"
+          v-on:clickede-show-detail="clickedShowDetailModales()"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -22,6 +38,11 @@ export default {
   },
   data() {
     return {};
+  },
+  methods: {
+    clickedShowDetailModales: function(value) {
+      this.$emit("clicked-show-detail", true);
+    }
   }
 };
 </script>

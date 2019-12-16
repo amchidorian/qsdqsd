@@ -2,7 +2,7 @@
   <div>
     <md-card md-with-hover>
       <router-link
-        :to="'policy/' + policy.id"
+        :to="'/policy/' + policy.id"
         style="text-decoration: none; color:black; border:black;"
       >
         <md-ripple>

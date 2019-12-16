@@ -1,33 +1,50 @@
 <template>
-  <md-card style="height:100%;">
-    <md-card-header>
-      <md-card-header-text>
-        <div class="md-title">{{ app.name }}</div>
-      </md-card-header-text>
+  <md-card>
+    <md-card-media>
+      <img :src="app.icon" />
+    </md-card-media>
 
-      <md-card-media md-medium>
-        <img :src="app.icon" />
-      </md-card-media>
-    </md-card-header>
+    <md-card-expand>
+      <md-card-actions md-alignment="space-between">
+        <div>
+          <DeleteApplication
+            :app="app"
+            v-on:clicked-show-detail="clickedShowDetailModale()"
+          />
+        </div>
 
-    <md-card-actions>
-      <DeleteApplication />
-    </md-card-actions>
+        <md-card-expand-trigger>
+          <md-button class="md-icon-button">
+            <md-icon>keyboard_arrow_down</md-icon>
+          </md-button>
+        </md-card-expand-trigger>
+      </md-card-actions>
+
+      <md-card-expand-content>
+        <md-card-content>
+          {{ app.name }}
+        </md-card-content>
+      </md-card-expand-content>
+    </md-card-expand>
   </md-card>
 </template>
 
 <script>
-// import DeleteDevice from "../dialogs/DeleteDevice";
-// import EditDevice from "../dialogs/EditDevice";
+import DeleteApplication from "../dialogs/applications/DeleteApplication";
 
 export default {
   name: "ApplicationsWebAppCard",
-  // components: { DeleteDevice, EditDevice },
+  components: { DeleteApplication },
   props: {
     app: {
       type: Object,
       required: true,
       default: () => ({})
+    }
+  },
+  methods: {
+    clickedShowDetailModale: function(value) {
+      this.$parent.$emit("clickede-show-detail", true);
     }
   }
 };

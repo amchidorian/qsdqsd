@@ -1,40 +1,52 @@
 <template>
   <div>
-    <div class="md-size-25 passwordBtn">
-      <div class="md-size-25">
+    <div class="md-layout md-gutter">
+      <div
+        class="md-layout-item md-size-80 md-medium-size-60 md-small-size-40 md-xsmall-size-0"
+      ></div>
+      <div
+        class="md-layout-item md-size-10 md-medium-size-20 md-small-size-30 md-xsmall-size-50"
+        v-if="!updateMode"
+      >
         <md-button
           class="md-primary"
-          v-if="!updateMode"
           @click="updateMode = true"
+          style="right:0; margin:1px;"
         >
           Editer
-          <md-icon>edit</md-icon>
         </md-button>
       </div>
-      <div class="md-size-25">
+      <div
+        class="md-layout-item md-size-10 md-medium-size-20 md-small-size-30 md-xsmall-size-50"
+        v-if="!updateMode"
+      >
         <md-button
           class="md-primary"
-          v-if="updateMode"
           @click="updateMode = true"
+          style="right:0; margin:1px;"
         >
           Réinitialiser
         </md-button>
       </div>
-      <div class="md-size-25">
+      <div
+        class="md-layout-item md-size-10 md-medium-size-20 md-small-size-30 md-xsmall-size-50"
+        v-if="updateMode"
+      >
         <md-button
           style="right:0; margin:1px;"
           class="md-primary validateColor"
-          v-if="updateMode"
           @click="saveRequirements()"
         >
           Valider
         </md-button>
       </div>
-      <div class="md-size-25">
+      <div
+        class="md-layout-item md-size-10 md-medium-size-20 md-small-size-30 md-xsmall-size-50"
+        v-if="updateMode"
+      >
         <md-button
           style="right:0; margin:1px;"
           class="md-primary cancelColor"
-          v-if="updateMode"
           @click="cancelRequirements()"
         >
           Annuler
@@ -241,7 +253,7 @@
 </template>
 
 <script>
-// import { mapGetters } from "vuex";
+import { groupeService } from "../../../_services/groupe.service";
 
 export default {
   name: "PasswordSpec",
@@ -286,6 +298,11 @@ export default {
   beforeCreate() {},
   created() {
     this.savedRequirements = this.requirements === null ? false : true;
+    if (this.requirements === null) {
+      this.requirements = this.passwordRequirements;
+    }
+    console.log("this.requirements");
+    console.log(this.requirements);
   },
   methods: {
     disabledInput(type) {
@@ -344,10 +361,15 @@ export default {
       this.untoggleError();
 
       if (this.checkData()) {
-        this.$store.dispatch("policyService/savePasswordRequirements", {
-          pass: this.requirements,
-          policyId: this.$router.history.current.params.id
-        });
+        groupeService
+          .savePasswordRequirements({
+            pass: this.requirements,
+            policyId: this.$router.history.current.params.id
+          })
+          .then(res => {
+            console.log("groupeService savePasswordRequirements");
+            document.getElementById("refreshGroupeBtn").click();
+          });
         this.cancelRequirements();
       }
     },
