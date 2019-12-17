@@ -5,37 +5,41 @@
       fonctionnalités émise par les applications.
     </p>
     <div class="md-layout md-gutter">
-      <div class="md-layout-item md-size-60">
+      <div
+        class="md-layout-item md-size-25  md-medium-size-20 md-small-size-15 md-xsmall-size-5"
+      />
+      <div
+        class="md-layout-item md-size-50 md-medium-size-60 md-small-size-70 md-xsmall-size-90"
+      >
         <md-field>
           <label for="movie">
-            Les demandes d'accès émissent par les applications sont :</label
+            Les demandes d'accès émissent par les applications sont :</label>
+          <md-select
+            id="movie"
+            v-model="globalPerm.value"
+            name="movie"
           >
-          <md-select v-model="globalPerm.value" name="movie" id="movie">
-            <md-option value="GRANT">automatiquement acceptées</md-option>
-            <md-option value="DENY">automatiquement refusées</md-option>
-            <md-option value="PROMPT"
-              >gérer au cas par cas par l'utilisateur</md-option
+            <md-option value="GRANT">
+              automatiquement acceptées
+            </md-option>
+            <md-option value="DENY">
+              automatiquement refusées
+            </md-option>
+            <md-option
+              value="PROMPT"
             >
+              gérer au cas par cas par l'utilisateur
+            </md-option>
           </md-select>
         </md-field>
-      </div>
-      <div class="md-layout-item md-size-20">
-        <md-button class="md-primary" @click="validGlobalUpdate"
-          >Mettre a Jour</md-button
-        >
-      </div>
-      <div class="md-layout-item md-size-20">
-        <md-button class="md-accent" @click="cancelGlobalUpdate"
-          >Annuler</md-button
-        >
       </div>
     </div>
     <md-table>
       <md-table-row>
         <md-table-head>Nom de la permission</md-table-head>
         <md-table-head>Action</md-table-head>
-        <md-table-head></md-table-head>
-        <md-table-head></md-table-head>
+        <md-table-head />
+        <md-table-head v-if="creationMode" />
       </md-table-row>
 
       <md-table-row
@@ -45,115 +49,132 @@
         <md-table-cell>{{ perm.text }}</md-table-cell>
         <md-table-cell v-if="editGrantGroup == index">
           <md-field>
-            <md-select v-model="perm.value" name="movie" id="movie">
-              <md-option value="GRANT">automatiquement acceptées</md-option>
-              <md-option value="DENY">automatiquement refusées</md-option>
-              <md-option value="PROMPT">gérer par l'utilisateur</md-option>
+            <md-select
+              id="movie"
+              v-model="perm.value"
+              name="movie"
+            >
+              <md-option value="GRANT">
+                automatiquement acceptées
+              </md-option>
+              <md-option value="DENY">
+                automatiquement refusées
+              </md-option>
+              <md-option value="PROMPT">
+                gérer par l'utilisateur
+              </md-option>
             </md-select>
           </md-field>
         </md-table-cell>
         <md-table-cell v-else>
           {{ getPermValueTraduction(perm.value) }}
         </md-table-cell>
-        <md-table-cell class="cellTable" v-if="editGrantGroup == index">
+        <md-table-cell v-if="creationMode" />
+        <md-table-cell
+          v-if="editGrantGroup == index"
+          class="cellTable"
+        >
           <md-button
-            @click="saveUpdatedGrant(perm)"
             class="md-icon-button btnCreate"
+            @click="saveUpdatedGrant(perm)"
           >
             <md-icon>check</md-icon>
           </md-button>
         </md-table-cell>
-        <md-table-cell class="cellTable" v-else>
+        <md-table-cell
+          v-else
+          class="cellTable"
+        >
           <md-button
-            @click="editGrantGroup = index"
             class="md-icon-button btnTable"
+            @click="editGrantGroup = index"
           >
             <md-icon>edit</md-icon>
           </md-button>
         </md-table-cell>
-        <md-table-cell class="cellTable" v-if="editGrantGroup == index">
-          <md-button
-            class="md-icon-button btnCreate"
-            @click="createMode = true"
-          >
+        <md-table-cell
+          v-if="editGrantGroup == index"
+          class="cellTable"
+        >
+          <md-button class="md-icon-button btnCreate">
             <md-icon>cancel</md-icon>
           </md-button>
         </md-table-cell>
-        <md-table-cell class="cellTable" v-else>
-          <md-button class="md-icon-button btnTable" @click="createMode = true">
-            <md-icon>delete</md-icon>
+      </md-table-row>
+      <md-table-row>
+        <md-table-cell>
+          <md-field v-if="creationMode">
+            <label>Permission</label>
+            <md-select
+              v-model="newGrantPerm.permission"
+              md-dense
+            >
+              <md-option
+                v-for="(perm, index) in unsetPermissionGroupGrant"
+                :key="index"
+                :value="perm.value"
+              >
+                {{ perm.text }}
+              </md-option>
+            </md-select>
+          </md-field>
+        </md-table-cell>
+        <md-table-cell>
+          <md-field v-if="creationMode">
+            <label>Action</label>
+            <md-select
+              v-model="newGrantPerm.value"
+              md-dense
+            >
+              <md-option value="GRANT">
+                Automatiquement validée
+              </md-option>
+              <md-option value="DENY">
+                Automatiquement refusée
+              </md-option>
+              <md-option value="PROMPT">
+                Gérer par l'utilisateur
+              </md-option>
+            </md-select>
+          </md-field>
+        </md-table-cell>
+        <md-table-cell v-if="creationMode">
+          <md-button
+            style="color:green;"
+            class="md-icon-button btnCreate"
+            @click="savePermission()"
+          >
+            <md-icon style="color:green;">
+              check
+            </md-icon>
+          </md-button>
+        </md-table-cell>
+        <md-table-cell>
+          <md-button
+            v-if="creationMode"
+            style="color:red;"
+            class="md-icon-button btnCreate"
+            @click="cancelCreate()"
+          >
+            <md-icon style="color:red;">
+              cancel
+            </md-icon>
+          </md-button>
+          <md-button
+            v-if="!creationMode"
+            class="md-icon-button btnTable"
+            @click="creationMode = true"
+          >
+            <md-icon>add</md-icon>
           </md-button>
         </md-table-cell>
       </md-table-row>
     </md-table>
-    <!-- <sui-tab>
-              <sui-table-cell>
-                <sui-icon
-                  name="check"
-                  color="green"
-                  @click="saveUpdatedGrant(perm)"
-                  v-if="editGrantGroup == index"
-                />
-                <sui-icon
-                  name="pencil"
-                  @click="editGrantGroup = index"
-                  v-else
-                />
-              </sui-table-cell>
-              <sui-table-cell>
-                <sui-icon
-                  name="close"
-                  color="red"
-                  @click="cancelEdit()"
-                  v-if="editGrantGroup == index"
-                />
-                <sui-icon name="trash" v-else />
-              </sui-table-cell>
-            </sui-table-row>
-            <sui-table-row v-if="!creationMode">
-              <sui-table-cell colspan="3"></sui-table-cell>
-              <sui-table-cell collapsing>
-                <sui-icon name="plus" @click="creationMode = true" />
-              </sui-table-cell>
-            </sui-table-row>
-            <sui-table-row v-else>
-              <sui-table-cell>
-                <sui-dropdown
-                  placeholder="non défini"
-                  selection
-                  fluid
-                  :options="unsetPermissionGroupGrant"
-                  v-model="newGrantPerm.permission"
-                />
-              </sui-table-cell>
-              <sui-table-cell>
-                <sui-dropdown
-                  placeholder="non défini"
-                  selection
-                  fluid
-                  :options="dropdownOptions"
-                  v-model="newGrantPerm.value"
-                />
-              </sui-table-cell>
-              <sui-table-cell collapsing>
-                <sui-icon
-                  name="check"
-                  color="green"
-                  @click="savePermission()"
-                />
-              </sui-table-cell>
-              <sui-table-cell collapsing>
-                <sui-icon name="close" color="red" @click="cancelCreate()" />
-              </sui-table-cell>
-            </sui-table-row>
-          </sui-table-body>
-        </sui-table>
-      </sui-tab-pane>
-    </sui-tab> -->
   </div>
 </template>
 
 <script>
+import { groupeService } from "../../../_services/groupe.service";
 export default {
   name: "PermissionSpec",
   components: {},
@@ -256,12 +277,16 @@ export default {
   computed: {},
   watch: {
     "globalPerm.value": function() {
-      if (!this.globalPerm.update) {
-        this.globalPerm.updated = true;
-      }
-      if (this.globalPerm.value === this.permissionPolicy.value) {
-        this.globalPerm.updated = false;
-      }
+      groupeService
+        .updatePolicyPermission({
+          id: this.policyId,
+          perm: this.globalPerm.value
+        })
+        .then(res => {
+          console.log("groupeService updatePolicyPermission");
+
+          document.getElementById("refreshGroupeBtn").click();
+        });
     },
     "permissionPolicy.value": function() {
       this.globalPerm = { ...this.permissionPolicy };
@@ -277,14 +302,17 @@ export default {
     this.parsePermissionGrant();
   },
   methods: {
-    cancelGlobalUpdate() {
-      this.globalPerm = this.permissionPolicy.value;
-    },
     validGlobalUpdate() {
-      this.$store.dispatch("policyService/updatePolicyPermission", {
-        id: this.policyId,
-        perm: this.globalPerm.value
-      });
+      groupeService
+        .updatePolicyPermission({
+          id: this.policyId,
+          perm: this.globalPerm.value
+        })
+        .then(res => {
+          console.log("groupeService updatePolicyPermission");
+
+          document.getElementById("refreshGroupeBtn").click();
+        });
     },
     parsePermissionGrant() {
       this.setPermissionGroupGrant = [];
@@ -328,16 +356,37 @@ export default {
       this.creationMode = false;
     },
     savePermission() {
-      this.$store.dispatch("policyService/saveGrantPermission", {
-        id: this.policyId,
-        perm: this.newGrantPerm
-      });
+      console.log(this.newGrantPerm);
+      if (
+        this.newGrantPerm.permission == null ||
+        this.newGrantPerm.value == null
+      ) {
+        console.log("error");
+      } else {
+        groupeService
+          .saveGrantPermission({
+            id: this.policyId,
+            perm: this.globalPerm.value
+          })
+          .then(res => {
+            console.log("groupeService updatePolicyPermission");
+
+            document.getElementById("refreshGroupeBtn").click();
+          });
+        this.creationMode = false;
+      }
     },
     saveUpdatedGrant(perm) {
-      this.$store.dispatch("policyService/saveGrantPermission", {
-        id: this.policyId,
-        perm: perm
-      });
+      groupeService
+        .saveGrantPermission({
+          id: this.policyId,
+          perm: this.globalPerm.value
+        })
+        .then(res => {
+          console.log("groupeService updatePolicyPermission");
+
+          document.getElementById("refreshGroupeBtn").click();
+        });
       this.editGrantGroup = null;
     }
   }

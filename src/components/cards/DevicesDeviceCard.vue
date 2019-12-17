@@ -1,12 +1,16 @@
 <template>
   <md-card>
     <md-card-header>
-      <div class="md-title">{{ device.name }}</div>
-      <div class="md-subhead">Last sync. {{ device.lastPolicySync }}</div>
+      <div class="md-title">
+        {{ device.name }}
+      </div>
+      <div class="md-subhead">
+        Last sync. {{ device.lastPolicySync }}
+      </div>
     </md-card-header>
 
-    <md-card-content
-      ><md-list class="md-dense">
+    <md-card-content>
+      <md-list class="md-dense">
         <md-list-item>
           <md-icon>store</md-icon>
           <span class="md-list-item-text">{{ device.magasin.city }}</span>

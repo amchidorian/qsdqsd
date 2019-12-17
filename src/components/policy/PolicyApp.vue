@@ -1,6 +1,9 @@
 <template>
   <md-list-item>
-    <md-card class="appCard" v-if="installed && !updateMode">
+    <md-card
+      v-if="installed && !updateMode"
+      class="appCard"
+    >
       <div class="md-layout md-gutter">
         <div class="md-layout-item md-size-75 appLabel">
           <div class="md-subhead">
@@ -9,12 +12,15 @@
         </div>
         <div class="md-layout-item md-size-25">
           <md-avatar>
-            <img :src="app.icon" />
+            <img :src="app.icon">
           </md-avatar>
         </div>
       </div>
     </md-card>
-    <md-card class="appCard" v-else-if="!installed && !updateMode">
+    <md-card
+      v-else-if="!installed && !updateMode"
+      class="appCard"
+    >
       <div class="md-layout md-gutter">
         <div class="md-layout-item md-size-75 appLabel">
           <div class="md-subhead">
@@ -23,12 +29,16 @@
         </div>
         <div class="md-layout-item md-size-25">
           <md-avatar>
-            <img :src="app.icon" />
+            <img :src="app.icon">
           </md-avatar>
         </div>
       </div>
     </md-card>
-    <md-card class="appCard" md-with-hover v-if="installed && updateMode">
+    <md-card
+      v-if="installed && updateMode"
+      class="appCard"
+      md-with-hover
+    >
       <div class="md-layout md-gutter">
         <div class="md-layout-item md-size-75 appLabel">
           <div class="md-subhead">
@@ -37,16 +47,20 @@
         </div>
         <div class="md-layout-item md-size-25">
           <md-avatar>
-            <img :src="app.icon" />
+            <img :src="app.icon">
           </md-avatar>
         </div>
       </div>
     </md-card>
-    <md-card class="appCard" md-with-hover v-else-if="!installed && updateMode">
+    <md-card
+      v-else-if="!installed && updateMode"
+      class="appCard"
+      md-with-hover
+    >
       <div class="md-layout md-gutter">
         <div class="md-layout-item md-size-25">
           <md-avatar>
-            <img :src="app.icon" />
+            <img :src="app.icon">
           </md-avatar>
         </div>
         <div class="md-layout-item md-size-75 appLabel">

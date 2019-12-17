@@ -4,31 +4,35 @@
       <md-icon>delete</md-icon>
     </md-button>
 
-    <md-dialog class="" :md-active.sync="showDialog" @md-closed="close()">
-      <md-dialog-title class="headerDialogDeleteDevice"
-        >Suppression de l'Appareil : {{ device.name }}</md-dialog-title
-      >
+    <md-dialog :md-active.sync="showDialog" @md-closed="close()">
+      <md-dialog-title>
+        Suppression de l'Appareil : {{ device.name }}
+      </md-dialog-title>
 
       <div class="md-layout md-gutter md-alignment-top-center">
         <div class="md-layout-item md-size-90">
-          <md-chip class="deleteDeviceWarning">
-            <md-icon>warning</md-icon>
-            Supprimer un appareil le réinitialisera.
-          </md-chip>
+          <span class="md-subheading" style="color:orange"
+            >Supprimer un appareil le réinitialisera et effacera les données
+            présente sur celui ci.
+          </span>
+          <br />
+          <br />
           <span class="md-subheading"
             >Afin de confirmer la Suppression de l'Appareil, merci de renseigner
             son nom :
           </span>
           <md-field :class="messageClass" @click="error = false">
             <label>Nom de l'Appareil</label>
-            <md-input v-model="userInput"></md-input>
+            <md-input v-model="userInput" />
             <span class="md-error">Les noms ne correspondent pas.</span>
           </md-field>
         </div>
       </div>
 
       <md-dialog-actions>
-        <md-button class="md-primary" @click="close()">Annuler </md-button>
+        <md-button class="md-primary" @click="close()">
+          Annuler
+        </md-button>
         <md-button class="md-accent" @click="deleteDevice()">
           <md-icon>delete</md-icon>
           Supprimer
@@ -39,6 +43,7 @@
 </template>
 
 <script>
+import { devicesService } from "../../../_services/devices.service";
 export default {
   name: "DeleteDevice",
   props: {
@@ -53,25 +58,27 @@ export default {
     showDialog: false,
     error: false
   }),
+  computed: {
+    messageClass() {
+      return {
+        "md-invalid": this.error
+      };
+    }
+  },
   methods: {
     deleteDevice() {
       if (this.userInput != this.device.name) {
         this.error = true;
         console.log("error");
       } else {
-        console.log("success");
+        devicesService
+          .removeDevices(this.userInput)
+          .then(res => console.log(res));
       }
     },
     close() {
       this.userInput = "";
       this.error = false;
-    }
-  },
-  computed: {
-    messageClass() {
-      return {
-        "md-invalid": this.error
-      };
     }
   }
 };

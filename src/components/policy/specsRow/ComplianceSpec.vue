@@ -5,102 +5,117 @@
       Réinitialiser l'appareil) sur tous les appareils ne respectant pas une
       règle de la Restriction associé.
     </p>
-    <md-table md-card md-dense style="overflow:scroll!important">
+    <md-table
+      md-card
+      md-dense
+      style="overflow:scroll!important"
+    >
       <md-table-row>
         <md-table-head>Nom de la règle: </md-table-head>
         <md-table-head>Jours avant blocage</md-table-head>
         <md-table-head>Jours avant reset</md-table-head>
-        <md-table-head></md-table-head>
-        <md-table-head></md-table-head>
+        <md-table-head />
+        <md-table-head />
       </md-table-row>
       <md-table-row
         v-for="(compliance, index) in compliances"
-        v-bind:key="index"
+        :key="index"
       >
         <md-table-cell>
-          {{ getTraduction(compliance.settingName) }}</md-table-cell
-        >
+          {{ getTraduction(compliance.settingName) }}
+        </md-table-cell>
         <md-table-cell v-if="updateIndex === index">
-          <md-field v-bind:class="[{ 'md-invalid': error.day }]">
+          <md-field :class="[{ 'md-invalid': error.day }]">
             <md-input
-              @click="cancelError('day')"
               v-model="updateData.block"
               :placeholder="compliance.blockAction.blockAfterDays + ' jours'"
+              @click="cancelError('day')"
             />
-            <span class="md-error" v-if="error.day"
-              >Doit être inférieur au reset</span
-            >
+            <span
+              v-if="error.day"
+              class="md-error"
+            >Doit être inférieur au reset</span>
           </md-field>
         </md-table-cell>
-        <md-table-cell v-else
-          >{{ compliance.blockAction.blockAfterDays }} jours</md-table-cell
+        <md-table-cell
+          v-else
         >
+          {{ compliance.blockAction.blockAfterDays }} jours
+        </md-table-cell>
         <md-table-cell v-if="updateIndex === index">
-          <md-field v-bind:class="[{ 'md-invalid': error.day }]">
+          <md-field :class="[{ 'md-invalid': error.day }]">
             <md-input
-              @click="cancelError('day')"
               v-model="updateData.wipe"
               :placeholder="compliance.wipeAction.wipeAfterDays + ' jours'"
+              @click="cancelError('day')"
             />
-            <span class="md-error" v-if="error.day"
-              >Doit être supérieur au blocage</span
-            >
+            <span
+              v-if="error.day"
+              class="md-error"
+            >Doit être supérieur au blocage</span>
           </md-field>
         </md-table-cell>
-        <md-table-cell v-else
-          >{{ compliance.wipeAction.wipeAfterDays }} jours</md-table-cell
+        <md-table-cell
+          v-else
         >
+          {{ compliance.wipeAction.wipeAfterDays }} jours
+        </md-table-cell>
         <md-table-cell class="cellTable">
           <md-button
+            v-if="updateIndex != index && updateIndex == null && !createMode"
             class="md-icon-button btnTable"
             @click="updateMode(index)"
-            v-if="updateIndex != index && updateIndex == null && !createMode"
           >
             <md-icon>edit</md-icon>
           </md-button>
           <md-button
+            v-if="updateIndex == index"
             style="color:green"
             class="md-icon-button btnCreate"
             @click="validUpdate(index)"
-            v-if="updateIndex == index"
           >
-            <md-icon style="color:green">check</md-icon>
+            <md-icon style="color:green">
+              check
+            </md-icon>
           </md-button>
         </md-table-cell>
         <md-table-cell class="cellTable">
           <md-button
+            v-if="updateIndex != index && updateIndex == null && !createMode"
             class="md-icon-button btnTable"
             @click="deleteCompliance(compliance.settingName)"
-            v-if="updateIndex != index && updateIndex == null && !createMode"
           >
             <md-icon>delete</md-icon>
           </md-button>
           <md-button
+            v-if="updateIndex == index"
             style="color:red"
             class="md-icon-button btnCreate"
-            v-if="updateIndex == index"
             @click="cancelUpdate()"
           >
-            <md-icon style="color:red">cancel</md-icon>
+            <md-icon style="color:red">
+              cancel
+            </md-icon>
           </md-button>
         </md-table-cell>
       </md-table-row>
 
       <md-table-row v-if="createMode">
         <md-table-cell>
-          <md-field v-bind:class="[{ 'md-invalid': error.name }]">
+          <md-field :class="[{ 'md-invalid': error.name }]">
             <label>Règle : </label>
             <md-select
-              md-dense
               v-model="newCompliance.settingName"
+              md-dense
               @click="cancelError('name')"
             >
               <md-option
-                :value="c.value"
                 v-for="(c, i) in unsetCompliances"
-                v-bind:key="i"
-                >{{ c.text }}</md-option
+                :key="i"
+                :value="c.value"
               >
+                {{ c.text }}
+              </md-option>
             </md-select>
             <span class="md-error">Ce champs est requis</span>
           </md-field>
@@ -109,32 +124,38 @@
           <md-field
             style="max-width=20px!important
             "
-            v-bind:class="[{ 'md-invalid': error.block || error.day }]"
+            :class="[{ 'md-invalid': error.block || error.day }]"
           >
             <label>Jours avant blocage</label>
             <md-input
               v-model="newCompliance.block"
               @click="cancelError('block')"
             />
-            <span class="md-error" v-if="error.block"
-              >Ce champs est requis</span
-            >
-            <span class="md-error" v-if="error.day"
-              >Doit être inférieur au reset</span
-            >
+            <span
+              v-if="error.block"
+              class="md-error"
+            >Ce champs est requis</span>
+            <span
+              v-if="error.day"
+              class="md-error"
+            >Doit être inférieur au reset</span>
           </md-field>
         </md-table-cell>
         <md-table-cell>
-          <md-field v-bind:class="[{ 'md-invalid': error.wipe || error.day }]">
+          <md-field :class="[{ 'md-invalid': error.wipe || error.day }]">
             <label>Jours avant reset</label>
             <md-input
               v-model="newCompliance.wipe"
               @click="cancelError('wipe')"
             />
-            <span class="md-error" v-if="error.wipe">Ce champs est requis</span>
-            <span class="md-error" v-if="error.day"
-              >Doit être supérieur au blocage</span
-            >
+            <span
+              v-if="error.wipe"
+              class="md-error"
+            >Ce champs est requis</span>
+            <span
+              v-if="error.day"
+              class="md-error"
+            >Doit être supérieur au blocage</span>
           </md-field>
         </md-table-cell>
         <md-table-cell class="cellTable">
@@ -143,7 +164,9 @@
             class="md-icon-button btnCreate"
             @click="saveCompliance()"
           >
-            <md-icon style="color:green">check</md-icon>
+            <md-icon style="color:green">
+              check
+            </md-icon>
           </md-button>
         </md-table-cell>
         <md-table-cell class="cellTable">
@@ -152,17 +175,22 @@
             style="color:red"
             @click="cancelCreate()"
           >
-            <md-icon style="color:red">cancel</md-icon>
+            <md-icon style="color:red">
+              cancel
+            </md-icon>
           </md-button>
         </md-table-cell>
       </md-table-row>
       <md-table-row v-if="!createMode">
-        <md-table-cell> </md-table-cell>
-        <md-table-cell> </md-table-cell>
-        <md-table-cell> </md-table-cell>
-        <md-table-cell> </md-table-cell>
+        <md-table-cell />
+        <md-table-cell />
+        <md-table-cell />
+        <md-table-cell />
         <md-table-cell class="cellTable">
-          <md-button class="md-icon-button btnTable" @click="createMode = true">
+          <md-button
+            class="md-icon-button btnTable"
+            @click="createMode = true"
+          >
             <md-icon>add</md-icon>
           </md-button>
         </md-table-cell>
@@ -172,7 +200,7 @@
 </template>
 
 <script>
-// import { mapActions, mapState, mapGetters } from "vuex";
+import { groupeService } from "../../../_services/groupe.service";
 
 export default {
   name: "ComplianceSpec",
@@ -220,15 +248,6 @@ export default {
     };
   },
   computed: {
-    showError: function(firstErrorType, secondErrorType = false) {
-      console.log("showError");
-      console.log(this.error[firstErrorType]);
-      if (this.error[firstErrorType] || this.error[secondErrorType]) {
-        return "md-invalid";
-      } else {
-        return "";
-      }
-    }
   },
   watch: {},
   beforeCreate() {},
@@ -244,7 +263,6 @@ export default {
   },
   methods: {
     cancelError(errorName) {
-      console.log("cancelError");
       if (errorName === "name") {
         this.error.name = false;
       } else if (errorName === "block") {
@@ -276,10 +294,7 @@ export default {
       });
     },
     cancelUpdate() {
-      this.$store.dispatch(
-        "policyService/getPolicy",
-        this.$router.history.current.params.id
-      );
+      document.getElementById("refreshGroupeBtn").click();
       this.updateIndex = null;
     },
     updateMode(index) {
@@ -292,11 +307,15 @@ export default {
         }
       }
     },
-    deleteCompliance(name) {
-      this.$store.dispatch("policyService/deleteCompliance", {
-        id: this.policyId,
-        name: name
-      });
+    deleteCompliance(complianceName) {
+      groupeService
+        .deleteCompliance({
+          id: this.policyId,
+          name: complianceName
+        })
+        .then(res => {
+          document.getElementById("refreshGroupeBtn").click();
+        });
     },
     cancelCreate() {
       this.newCompliance = {
@@ -339,12 +358,14 @@ export default {
           ? this.compliances[index].wipeAction.wipeAfterDays
           : this.updateData.wipe;
       if (this.updateData.block < this.updateData.wipe) {
-        console.log("this.updateData");
-        console.log(this.updateData);
-        this.$store.dispatch("policyService/updateCompliance", {
-          id: this.policyId,
-          compliance: this.updateData
-        });
+        groupeService
+          .updateCompliance({
+            id: this.policyId,
+            compliance: this.updateData
+          })
+          .then(res => {
+            document.getElementById("refreshGroupeBtn").click();
+          });
         this.updateIndex = null;
         this.resetData();
       } else {
@@ -353,7 +374,6 @@ export default {
     },
     saveCompliance() {
       var errorDetected = false;
-
       for (var i in this.newCompliance) {
         if (this.newCompliance[i] === "") {
           errorDetected = true;
@@ -375,10 +395,14 @@ export default {
         errorDetected = true;
       }
       if (!errorDetected) {
-        this.$store.dispatch("policyService/createCompliance", {
-          id: this.policyId,
-          compliance: this.newCompliance
-        });
+        groupeService
+          .createCompliance({
+            id: this.policyId,
+            compliance: this.newCompliance
+          })
+          .then(res => {
+            document.getElementById("refreshGroupeBtn").click();
+          });
         this.createMode = false;
         this.resetData();
       }

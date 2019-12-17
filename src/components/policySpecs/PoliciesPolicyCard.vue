@@ -2,9 +2,15 @@
   <md-card md-with-hover>
     <md-ripple>
       <md-card-header style="padding-bottom:0px;">
-        <div class="md-title">{{ policy.name }}</div>
-        <div class="md-subhead">Crée le : {{ policy.date }}</div>
-        <div class="md-subhead">Version {{ policy.version }}</div>
+        <div class="md-title">
+          {{ policy.name }}
+        </div>
+        <div class="md-subhead">
+          Crée le : {{ policy.date }}
+        </div>
+        <div class="md-subhead">
+          Version {{ policy.version }}
+        </div>
       </md-card-header>
       <md-card-actions>
         <DeletePolicy :policy="policy" />

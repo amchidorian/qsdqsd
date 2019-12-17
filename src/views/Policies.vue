@@ -1,40 +1,66 @@
 <template>
   <div style="padding-top:20px;">
-    <div class="md-layout md-gutter">
+    <div
+      v-if="policies.length > 0"
+      class="md-layout md-gutter"
+    >
       <div
-        class="md-layout-item  md-size-20 md-medium-size-25 md-small-size-50 md-xsmall-size-100"
+        class="md-layout-item md-size-20 md-medium-size-25 md-small-size-50 md-xsmall-size-100"
         style="margin-bottom: 20px;"
       >
-        <AddPolicy style="height:100%" />
+        <AddPolicy
+          style="height:100%"
+          :type="'notempty'"
+        />
       </div>
       <div
-        class="md-layout-item  md-size-20 md-medium-size-25 md-small-size-50 md-xsmall-size-100 columnPolicies"
         v-for="(policy, index) in policies"
         :key="index"
+        class="md-layout-item  md-size-20 md-medium-size-25 md-small-size-50 md-xsmall-size-100 columnPolicies"
       >
         <PoliciesPolicyCard :policy="policy" />
       </div>
     </div>
+    <md-empty-state
+      v-if="policies.length == 0"
+      md-icon="lock"
+      md-label="Aucun Groupe n'a été enregistré."
+      md-description="En en enregistrant, vous pourrez les assigné à différents appareils permettant de les restreindre."
+    >
+      <AddPolicy
+        style="height:100%"
+        :type="'empty'"
+      />
+    </md-empty-state>
+    <button
+      id="refreshGroupesBtn"
+      style="display:none;"
+      @click="refreshGroupes"
+    />
   </div>
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { groupesService } from "../_services/groupes.service";
 import PoliciesPolicyCard from "../components/cards/PoliciesPolicyCard";
 import AddPolicy from "../components/dialogs/policies/AddPolicy";
 export default {
   name: "Policies",
   components: { PoliciesPolicyCard, AddPolicy },
   data() {
-    return {};
+    return {
+      policies: []
+    };
   },
   computed: {
-    ...mapGetters({
-      policies: "policiesService/get_policies"
-    })
   },
   beforeCreate() {
-    this.$store.dispatch("policiesService/getPolicies");
+    groupesService.getGroupes().then(res => (this.policies = res));
+  },
+  methods: {
+    refreshGroupes() {
+      groupesService.getGroupes().then(res => (this.policies = res));
+    }
   },
   openPolicyPage: function(id) {
     this.$router.push("/policy/" + id);

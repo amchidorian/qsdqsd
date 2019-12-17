@@ -2,14 +2,20 @@
   <div>
     <md-card md-with-hover>
       <router-link
-        :to="'policy/' + policy.id"
+        :to="'/policy/' + policy.id"
         style="text-decoration: none; color:black; border:black;"
       >
         <md-ripple>
           <md-card-header>
-            <div class="md-title">{{ policy.name }}</div>
-            <div class="md-subhead">Crée le : {{ policy.date }}</div>
-            <div class="md-subhead">Version {{ policy.version }}</div>
+            <div class="md-title">
+              {{ policy.name }}
+            </div>
+            <div class="md-subhead">
+              Crée le : {{ policy.date }}
+            </div>
+            <div class="md-subhead">
+              Version {{ policy.version }}
+            </div>
           </md-card-header>
         </md-ripple>
       </router-link>

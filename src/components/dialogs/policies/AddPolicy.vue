@@ -1,18 +1,35 @@
 <template lang="html">
   <div>
-    <md-card md-with-hover style="height:100%;">
+    <md-card
+      v-if="type == 'notempty'"
+      md-with-hover
+      style="height:100%;"
+    >
       <md-ripple>
-        <div style="height:100%;" @click="showDialog = true">
+        <div
+          style="height:100%;"
+          @click="showDialog = true"
+        >
           <md-card-actions style="height: 100%; width:70%; margin-left: 15%;">
-            <md-icon class="md-size-2x">add</md-icon><br />
-            <span class="md-subhead test" style="margin-left: 10px;"
-              >Créer une nouvelle Restriction</span
-            >
+            <md-icon class="md-size-2x">
+              add
+            </md-icon><br>
+            <span
+              class="md-subhead test"
+              style="margin-left: 10px;"
+            >Créer une nouvelle Restriction</span>
           </md-card-actions>
         </div>
       </md-ripple>
     </md-card>
 
+    <md-button
+      v-if="type == 'empty'"
+      class="md-primary md-raised"
+      @click="showDialog = true"
+    >
+      Ajouter un Groupe
+    </md-button>
     <md-dialog
       class="dialogAddPolicy"
       :md-active.sync="showDialog"
@@ -22,12 +39,15 @@
 
       <div class="md-layout md-gutter md-alignment-top-center">
         <div class="md-layout-item md-size-90">
-          <md-field :class="messageClass" @click="error = false">
+          <md-field
+            :class="messageClass"
+            @click="error = false"
+          >
             <label>Nom de la nouvelle restriction :</label>
-            <md-input v-model="userInput"></md-input>
-            <span class="md-error"
-              >La restriction "{{ userInput }}" existe deja.</span
-            >
+            <md-input v-model="userInput" />
+            <span
+              class="md-error"
+            >La restriction "{{ userInput }}" existe deja.</span>
           </md-field>
           <!-- <md-progress-spinner
             :md-diameter="20"
@@ -41,24 +61,42 @@
       </div>
 
       <md-dialog-actions>
-        <md-button class="md-primary" @click="validateCreate()">
+        <md-button
+          class="md-primary"
+          @click="validateCreate()"
+        >
           Créer
         </md-button>
-        <md-button class="md-primary" @click="close()">Annuler </md-button>
+        <md-button
+          class="md-primary"
+          @click="close()"
+        >
+          Annuler
+        </md-button>
       </md-dialog-actions>
     </md-dialog>
   </div>
 </template>
 
 <script>
+import { groupeService } from "../../../_services/groupe.service";
 export default {
   name: "AddPolicy",
-  props: {},
+  props: {
+    type: String
+  },
   data: () => ({
     userInput: "",
     showDialog: false,
     error: false
   }),
+  computed: {
+    messageClass() {
+      return {
+        "md-invalid": this.error
+      };
+    }
+  },
   methods: {
     close() {
       this.userInput = "";
@@ -66,16 +104,10 @@ export default {
       this.showDialog = false;
     },
     validateCreate() {
-      this.$store.dispatch("policyService/createPolicy", this.userInput);
-      this.$store.dispatch("policiesService/getPolicies");
-      this.close();
-    }
-  },
-  computed: {
-    messageClass() {
-      return {
-        "md-invalid": this.error
-      };
+      groupeService.createGroupe(this.userInput).then(res => {
+        document.getElementById("refreshGroupesBtn").click();
+        this.close();
+      });
     }
   }
 };

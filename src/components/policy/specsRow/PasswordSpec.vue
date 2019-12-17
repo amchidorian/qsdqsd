@@ -1,40 +1,52 @@
 <template>
   <div>
-    <div class="md-size-25 passwordBtn">
-      <div class="md-size-25">
+    <div class="md-layout md-gutter">
+      <div
+        class="md-layout-item md-size-80 md-medium-size-60 md-small-size-40 md-xsmall-size-0"
+      />
+      <div
+        v-if="!updateMode"
+        class="md-layout-item md-size-10 md-medium-size-20 md-small-size-30 md-xsmall-size-50"
+      >
         <md-button
           class="md-primary"
-          v-if="!updateMode"
+          style="right:0; margin:1px;"
           @click="updateMode = true"
         >
           Editer
-          <md-icon>edit</md-icon>
         </md-button>
       </div>
-      <div class="md-size-25">
+      <div
+        v-if="!updateMode"
+        class="md-layout-item md-size-10 md-medium-size-20 md-small-size-30 md-xsmall-size-50"
+      >
         <md-button
           class="md-primary"
-          v-if="updateMode"
+          style="right:0; margin:1px;"
           @click="updateMode = true"
         >
           Réinitialiser
         </md-button>
       </div>
-      <div class="md-size-25">
+      <div
+        v-if="updateMode"
+        class="md-layout-item md-size-10 md-medium-size-20 md-small-size-30 md-xsmall-size-50"
+      >
         <md-button
           style="right:0; margin:1px;"
           class="md-primary validateColor"
-          v-if="updateMode"
           @click="saveRequirements()"
         >
           Valider
         </md-button>
       </div>
-      <div class="md-size-25">
+      <div
+        v-if="updateMode"
+        class="md-layout-item md-size-10 md-medium-size-20 md-small-size-30 md-xsmall-size-50"
+      >
         <md-button
           style="right:0; margin:1px;"
           class="md-primary cancelColor"
-          v-if="updateMode"
           @click="cancelRequirements()"
         >
           Annuler
@@ -44,88 +56,112 @@
     <div class="md-layout md-gutter">
       <div class="md-layout-item md-small-size-100">
         <md-field
-          v-bind:class="{ 'md-invalid': errorToggled('passwordScope') }"
+          :class="{ 'md-invalid': errorToggled('passwordScope') }"
           @click="untoggleError()"
         >
           <label>Type de mot de passe :</label>
           <md-select
-            name="typeParam"
             id="typeParam"
             v-model="requirements.passwordScope"
+            name="typeParam"
             md-dense
             placeholder="Type de paramétrage :"
             :disabled="!updateMode"
           >
-            <md-option value="SCOPE_DEVICE">Mot de passe Téléphone</md-option>
-            <md-option value="SCOPE_PROFILE"
-              >Mot de passe Utilisateur</md-option
+            <md-option value="SCOPE_DEVICE">
+              Mot de passe Téléphone
+            </md-option>
+            <md-option
+              value="SCOPE_PROFILE"
             >
+              Mot de passe Utilisateur
+            </md-option>
           </md-select>
         </md-field>
       </div>
       <div class="md-layout-item md-small-size-100">
         <md-field
-          @click="untoggleError()"
-          v-bind:class="{
+          :class="{
             'md-invalid': errorToggled('passwordQuality')
           }"
+          @click="untoggleError()"
         >
           <label for="typeParam">Définir le type de mot de passe :</label>
           <md-select
-            name="typeParam"
             id="typeParam"
             v-model="requirements.passwordQuality"
+            name="typeParam"
             md-dense
             :disabled="!updateMode"
           >
-            <md-option value="SOMETHING">Basique</md-option>
-            <md-option value="NUMERIC">Numérique</md-option>
-            <md-option value="NUMERIC_COMPLEX">Numérique Avancé</md-option>
-            <md-option value="ALPHABETIC">Alphabétique</md-option>
-            <md-option value="ALPHANUMERIC">Alphanumérique</md-option>
-            <md-option value="COMPLEX">Avancé</md-option>
+            <md-option value="SOMETHING">
+              Basique
+            </md-option>
+            <md-option value="NUMERIC">
+              Numérique
+            </md-option>
+            <md-option value="NUMERIC_COMPLEX">
+              Numérique Avancé
+            </md-option>
+            <md-option value="ALPHABETIC">
+              Alphabétique
+            </md-option>
+            <md-option value="ALPHANUMERIC">
+              Alphanumérique
+            </md-option>
+            <md-option value="COMPLEX">
+              Avancé
+            </md-option>
           </md-select>
         </md-field>
       </div>
     </div>
-    <div class="md-layout-item md-small-size-100" v-if="!wipeOnError">
+    <div
+      v-if="!wipeOnError"
+      class="md-layout-item md-small-size-100"
+    >
       <md-switch
-        @click="untoggleError()"
         v-model="wipeOnError"
         :disabled="!updateMode"
-        v-bind:class="{
+        :class="{
           'md-invalid': errorToggled('maximumFailedPasswordsForWipe')
         }"
-        >Effacer les données contenu sur l'appareil si trop d'erreur de mot de
+        @click="untoggleError()"
+      >
+        Effacer les données contenu sur l'appareil si trop d'erreur de mot de
         passe
       </md-switch>
     </div>
-    <div class="md-layout md-gutter" v-else>
+    <div
+      v-else
+      class="md-layout md-gutter"
+    >
       <div class="md-layout-item md-small-size-100">
         <md-switch
-          @click="untoggleError()"
           v-model="wipeOnError"
           :disabled="!updateMode"
-          v-bind:class="{
+          :class="{
             'md-invalid': errorToggled('maximumFailedPasswordsForWipe')
           }"
-          >Effacer les données contenu sur l'appareil si trop de mot de passe
+          @click="untoggleError()"
+        >
+          Effacer les données contenu sur l'appareil si trop de mot de passe
           incorrect
         </md-switch>
       </div>
       <div class="md-layout-item md-small-size-100">
         <md-field
-          @click="untoggleError()"
-          v-bind:class="{
+          :class="{
             'md-invalid': errorToggled('maximumFailedPasswordsForWipe')
           }"
+          @click="untoggleError()"
         >
           <label>Définir le nombre d'essai :</label>
           <md-input
-            :disabled="!updateMode"
             v-model="requirements.maximumFailedPasswordsForWipe"
+            :disabled="!updateMode"
             type="number"
-          ></md-input>
+          />
         </md-field>
       </div>
     </div>
@@ -133,107 +169,107 @@
     <div class="md-layout md-gutter">
       <div class="md-layout-item md-small-size-100">
         <md-field
-          @click="untoggleError()"
           :disabled="!updateMode"
-          v-bind:class="{
+          :class="{
             'md-invalid': errorToggled('passwordMinimumLength')
           }"
+          @click="untoggleError()"
         >
           <label>Définir la longueur minimum du mot de passe :</label>
           <md-input
             v-model="requirements.passwordMinimumLength"
             type="number"
             :disabled="!updateMode"
-          ></md-input>
+          />
         </md-field>
       </div>
       <div class="md-layout-item md-small-size-100">
         <md-field
-          @click="untoggleError()"
           v-if="requirements.passwordQuality === 'COMPLEX'"
-          v-bind:class="{
+          :class="{
             'md-invalid': errorToggled('passwordMinimumLetters')
           }"
+          @click="untoggleError()"
         >
           <label>Définir le nombre minimum de lettres :</label>
           <md-input
             v-model="requirements.passwordMinimumLetters"
             type="number"
             :disabled="!updateMode"
-          ></md-input>
+          />
         </md-field>
       </div>
     </div>
 
     <div
-      class="md-layout md-gutter"
       v-if="requirements.passwordQuality === 'COMPLEX'"
+      class="md-layout md-gutter"
     >
       <div class="md-layout-item md-small-size-100">
         <md-field
-          @click="untoggleError()"
-          v-bind:class="{
+          :class="{
             'md-invalid': errorToggled('passwordMinimumLowerCase')
           }"
+          @click="untoggleError()"
         >
           <label>Définir le nombre minimum de lettres minuscule:</label>
           <md-input
-            :disabled="!updateMode"
             v-model="requirements.passwordMinimumLowerCase"
+            :disabled="!updateMode"
             type="number"
-          ></md-input>
+          />
         </md-field>
       </div>
       <div class="md-layout-item md-small-size-100">
         <md-field
-          @click="untoggleError()"
-          v-bind:class="{
+          :class="{
             'md-invalid': errorToggled('passwordMinimumUpperCase')
           }"
+          @click="untoggleError()"
         >
           <label>Définir le nombre minimum de lettres majuscules:</label>
           <md-input
-            :disabled="!updateMode"
             v-model="requirements.passwordMinimumUpperCase"
+            :disabled="!updateMode"
             type="number"
-          ></md-input>
+          />
         </md-field>
       </div>
     </div>
 
     <div
-      class="md-layout md-gutter"
       v-if="requirements.passwordQuality === 'COMPLEX'"
+      class="md-layout md-gutter"
     >
       <div class="md-layout-item md-small-size-100">
         <md-field
-          @click="untoggleError()"
-          v-bind:class="{
+          :class="{
             'md-invalid': errorToggled('passwordMinimumSymbols')
           }"
+          @click="untoggleError()"
         >
           <label>Définir le nombre minimum de symbols (_,-@... ):</label>
           <md-input
+            v-model="requirements.passwordMinimumSymbols"
             class="error"
             :disabled="!updateMode"
-            v-model="requirements.passwordMinimumSymbols"
             type="number"
-          ></md-input>
+          />
         </md-field>
       </div>
       <div class="md-layout-item md-small-size-100">
         <md-field
-          @click="untoggleError()"
-          v-bind:class="{
+          :class="{
             'md-invalid': errorToggled('passwordMinimumNumeric')
           }"
+          @click="untoggleError()"
         >
           <label>Définir le nombre minimum de caractère numériques :</label>
           <md-input
-            :disabled="!updateMode"
             v-model="requirements.passwordMinimumNumeric"
+            :disabled="!updateMode"
             type="number"
-          ></md-input>
+          />
         </md-field>
       </div>
     </div>
@@ -241,7 +277,7 @@
 </template>
 
 <script>
-// import { mapGetters } from "vuex";
+import { groupeService } from "../../../_services/groupe.service";
 
 export default {
   name: "PasswordSpec",
@@ -286,6 +322,11 @@ export default {
   beforeCreate() {},
   created() {
     this.savedRequirements = this.requirements === null ? false : true;
+    if (this.requirements === null) {
+      this.requirements = this.passwordRequirements;
+    }
+    console.log("this.requirements");
+    console.log(this.requirements);
   },
   methods: {
     disabledInput(type) {
@@ -344,10 +385,15 @@ export default {
       this.untoggleError();
 
       if (this.checkData()) {
-        this.$store.dispatch("policyService/savePasswordRequirements", {
-          pass: this.requirements,
-          policyId: this.$router.history.current.params.id
-        });
+        groupeService
+          .savePasswordRequirements({
+            pass: this.requirements,
+            policyId: this.$router.history.current.params.id
+          })
+          .then(res => {
+            console.log("groupeService savePasswordRequirements");
+            document.getElementById("refreshGroupeBtn").click();
+          });
         this.cancelRequirements();
       }
     },

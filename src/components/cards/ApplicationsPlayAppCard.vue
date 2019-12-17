@@ -1,18 +1,27 @@
 <template>
-  <md-card style="height:100%;">
-    <md-card-header>
-      <md-card-header-text>
-        <div class="md-title">{{ app.name }}</div>
-      </md-card-header-text>
+  <md-card style="margin-bottom:20px;">
+    <md-card-media>
+      <img :src="app.icon">
+    </md-card-media>
+    <md-card-expand>
+      <md-card-actions md-alignment="space-between">
+        <div>
+          {{ app.name }}
+        </div>
 
-      <md-card-media md-medium>
-        <img :src="app.icon" />
-      </md-card-media>
-    </md-card-header>
+        <md-card-expand-trigger>
+          <md-button class="md-icon-button">
+            <md-icon>keyboard_arrow_down</md-icon>
+          </md-button>
+        </md-card-expand-trigger>
+      </md-card-actions>
 
-    <md-card-actions>
-      <DeleteApplication />
-    </md-card-actions>
+      <md-card-expand-content>
+        <md-card-content style="padding:0!important;">
+          <DeleteApplication :app="app" />
+        </md-card-content>
+      </md-card-expand-content>
+    </md-card-expand>
   </md-card>
 </template>
 

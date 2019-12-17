@@ -1,11 +1,17 @@
 <template>
-  <div class="page-container" style=" display:fixed;">
+  <div
+    class="page-container"
+    style=" display:fixed;"
+  >
     <md-app style="height:100vh!important;">
-      <md-app-toolbar class="md-primary navHeader" md-elevation="0">
+      <md-app-toolbar
+        class="md-primary navHeader"
+        md-elevation="0"
+      >
         <md-button
-          class="md-icon-button"
-          @click="toggleMenu"
           v-if="!menuVisible"
+          class="md-icon-button"
+          @click="menuVisible = true"
         >
           <md-icon>menu</md-icon>
         </md-button>
@@ -17,31 +23,42 @@
         md-persistent="mini"
         style="height:94vh!important;"
       >
-        <md-toolbar class="md-transparent" md-elevation="0">
+        <md-toolbar
+          class="md-transparent"
+          md-elevation="0"
+        >
           <span>Menu</span>
 
           <div class="md-toolbar-section-end">
-            <md-button class="md-icon-button md-dense" @click="toggleMenu">
+            <md-button
+              class="md-icon-button md-dense"
+              @click="menuVisible = false"
+            >
               <md-icon>keyboard_arrow_left</md-icon>
             </md-button>
           </div>
         </md-toolbar>
 
         <md-list>
-          <md-list-item @click="navigate('Tous les Appareils', '/devices')">
+          <md-list-item
+            :to="'/devices'"
+            @click="changeTitle('Tout les Appareils')"
+          >
             <md-icon>phone_android</md-icon>
             <span class="md-list-item-text">Appareils</span>
           </md-list-item>
 
           <md-list-item
-            @click="navigate('Toutes les Restrictions', '/policies')"
+            :to="'/policies'"
+            @click="changeTitle('Tout les Groupes')"
           >
             <md-icon>lock</md-icon>
             <span class="md-list-item-text">Restrictions</span>
           </md-list-item>
 
           <md-list-item
-            @click="navigate('Toutes les Applications', '/applications')"
+            :to="'/applications'"
+            @click="changeTitle('Toutes les Applications')"
           >
             <md-icon>apps</md-icon>
             <span class="md-list-item-text">Applications</span>
@@ -50,44 +67,29 @@
       </md-app-drawer>
 
       <md-app-content class="appContent">
-        <router-view></router-view>
+        <router-view />
       </md-app-content>
     </md-app>
   </div>
 </template>
 
 <script>
-import { mapGetters } from "vuex";
 export default {
-  name: "app",
+  name: "App",
   data: () => ({
     menuVisible: false,
-    title: "Accueil"
+    unauthorized: false
   }),
-  methods: {
-    toggleMenu() {},
-    navigate(title, uri) {
-      this.$router.push(uri);
-      this.title = title;
-    }
-  },
-  created() {
-    if (!this.isLogged) {
-      this.$router.push("login");
-    }
-  },
   computed: {
-    ...mapGetters({
-      isLogged: "authService/get_is_logged"
-    })
+    title: function() {
+      console.log("computed title");
+      return localStorage.getItem("appTitle");
+    }
   },
-  watch: {
-    isLogged() {
-      if (!this.isLogged) {
-        this.$router.push({ name: "login" });
-      } else if (this.$route.name === "login") {
-        this.$router.push("/");
-      }
+  created() {},
+  methods: {
+    changeTitle(newTitle) {
+      localStorage.setItem("appTitle", newTitle);
     }
   }
 };

@@ -1,24 +1,38 @@
 <template>
   <div>
-    <md-tabs md-alignment="centered" style="margin-bottom:20px;">
+    <md-tabs
+      md-alignment="centered"
+      style="margin-bottom:20px;"
+    >
       <md-tab
-        :md-label="'Applications Playstore (' + playApps.length + ')'"
+        :md-label="'Applications Playstore ( ' + playApps.length + ' )'"
         @click="tab = 'play'"
-      ></md-tab>
+      />
       <md-tab
-        :md-label="'Applications Playstore (' + webApps.length + ')'"
+        :md-label="'Applications Web ( ' + webApps.length + ' )'"
         @click="tab = 'web'"
-      ></md-tab>
+      />
     </md-tabs>
-    <PlayApps :apps="playApps" v-if="tab == 'play'" />
-    <WebApps :apps="webApps" v-if="tab == 'web'" />
+    <PlayApps
+      v-if="tab == 'play'"
+      :apps="playApps"
+    />
+    <WebApps
+      v-if="tab == 'web'"
+      :apps="webApps"
+    />
+    <button
+      id="refreshAppsBtn"
+      style="display:none;"
+      @click="refreshApps"
+    />
   </div>
 </template>
 
 <script>
+import { applicationsService } from "../_services/applications.service";
 import PlayApps from "../components/applications/PlayApps";
 import WebApps from "../components/applications/WebApps";
-import { mapGetters } from "vuex";
 export default {
   name: "Applications",
   components: {
@@ -27,31 +41,29 @@ export default {
   },
   data() {
     return {
-      tab: "play"
+      tab: "play",
+      playApps: [],
+      webApps: []
     };
   },
-  computed: {
-    ...mapGetters({
-      webApps: "applicationService/get_web_apps",
-      playApps: "applicationService/get_play_apps"
-    })
-  },
+  computed: {},
   beforeCreate() {
-    this.$store.dispatch("applicationService/getApps");
+    applicationsService.getApplications().then(res => {
+      this.webApps = res.webApps;
+      this.playApps = res.playApps;
+    });
   },
   methods: {
-    // removeApp(app) {
-    //   this.openRemoveAppModal = true;
-    //   this.appToDelete = app;
-    // },
-    // addPlayApp() {
-    //   this.addType = "play";
-    //   this.openAddAppsModal = true;
-    // },
-    // addWebApp() {
-    //   this.addType = "web";
-    //   this.openAddAppsModal = true;
-    // }
+    refreshApps() {
+      applicationsService
+        .getApplications()
+        .then(res => {
+          console.log(res);
+          this.webApps = res.webApps;
+          this.playApps = res.playApps;
+        })
+        .catch(err => console.log(err));
+    }
   }
 };
 </script>

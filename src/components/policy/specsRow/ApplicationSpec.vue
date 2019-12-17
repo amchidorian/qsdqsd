@@ -1,7 +1,10 @@
 <template>
   <div class="md-layout md-gutter">
-    <div class="md-layout-item md-size-15"></div>
-    <div class="md-layout-item md-size-35" v-if="updateMode">
+    <div class="md-layout-item md-size-15" />
+    <div
+      v-if="updateMode"
+      class="md-layout-item md-size-35"
+    >
       <md-list class="md-dense">
         <draggable
           style="min-height:20px"
@@ -10,23 +13,35 @@
           :group="type"
           @change="log"
         >
-          <div v-for="(app, index) in apps.installed" v-bind:key="index">
-            <PolicyApp :app="app" :updatable="false" />
+          <div
+            v-for="(app, index) in apps.installed"
+            :key="index"
+          >
+            <PolicyApp
+              :app="app"
+              :updatable="false"
+            />
           </div>
         </draggable>
       </md-list>
     </div>
-    <div class="md-layout-item md-size-35" v-else>
+    <div
+      v-else
+      class="md-layout-item md-size-35"
+    >
       <md-list class="md-dense">
         <PolicyApp
           v-for="(app, index) in apps.installed"
-          v-bind:key="index"
+          :key="index"
           :app="app"
           :updatable="false"
         />
       </md-list>
     </div>
-    <div class="md-layout-item md-size-35" v-if="updateMode">
+    <div
+      v-if="updateMode"
+      class="md-layout-item md-size-35"
+    >
       <md-list class="md-dense">
         <draggable
           style="min-height:20px"
@@ -35,16 +50,31 @@
           :group="type"
           @change="log"
         >
-          <div v-for="(app, index) in apps.available" v-bind:key="index">
-            <PolicyApp :app="app" :updatable="false" />
+          <div
+            v-for="(app, index) in apps.available"
+            :key="index"
+          >
+            <PolicyApp
+              :app="app"
+              :updatable="false"
+            />
           </div>
         </draggable>
       </md-list>
     </div>
-    <div class="md-layout-item md-size-35" v-else>
+    <div
+      v-else
+      class="md-layout-item md-size-35"
+    >
       <md-list class="md-dense">
-        <div v-for="(app, index) in apps.available" v-bind:key="index">
-          <PolicyApp :app="app" :updatable="false" />
+        <div
+          v-for="(app, index) in apps.available"
+          :key="index"
+        >
+          <PolicyApp
+            :app="app"
+            :updatable="false"
+          />
         </div>
       </md-list>
     </div>
@@ -76,7 +106,6 @@ export default {
   data() {
     return {};
   },
-  beforeCreate() {},
   computed: {
     set() {
       var dataSet = [];
@@ -97,6 +126,7 @@ export default {
       return dataSet;
     }
   },
+  beforeCreate() {},
   methods: {
     log: function(evt) {
       if (Object.keys(evt)[0] === "added") {

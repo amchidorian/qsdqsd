@@ -1,6 +1,10 @@
 <template lang="html">
   <div>
-    <md-button class="md-icon-button md-accent" @click="showDialog = true">
+    <md-button
+      class="md-icon-button md-accent"
+      style="text-align:right;"
+      @click="showDialog = true"
+    >
       <md-icon>delete</md-icon>
     </md-button>
 
@@ -9,45 +13,57 @@
       :md-active.sync="showDialog"
       @md-closed="close()"
     >
-      <md-dialog-title class="headerDialogDeleteDevice"
-        >Suppression de la restriction : {{ policy.name }}</md-dialog-title
-      >
-
+      <md-dialog-title>
+        Suppression de l'application : {{ app.name }}
+      </md-dialog-title>
       <div class="md-layout md-gutter md-alignment-top-center">
         <div class="md-layout-item md-size-90">
-          <md-chip class="deleteDeviceWarning">
-            <md-icon>warning</md-icon>
-            Supprimer la restriction réinitialisera tous les appareils
-            associés.</md-chip
-          >
           <p class="md-subheading">
-            Afin de confirmer la suppression de la Restriction, merci de
+            Afin de confirmer la suppression de l'Application', merci de
             renseigner son nom :
           </p>
-          <md-field :class="messageClass" @click="error = false">
-            <label>Nom de la restriction :</label>
-            <md-input v-model="userInput"></md-input>
+          <p
+            class="md-subheading"
+            style="color:orange;"
+          >
+            Supprimer l'Application la désinstallera de tous les appareils.
+          </p>
+          <md-field
+            :class="messageClass"
+            @click="error = false"
+          >
+            <label>Nom de l'Application :</label>
+            <md-input v-model="userInput" />
             <span class="md-error">Les noms ne correspondent pas.</span>
           </md-field>
         </div>
       </div>
 
       <md-dialog-actions>
-        <md-button class="md-accent" @click="deletePolicy()">
+        <md-button
+          class="md-primary"
+          @click="close()"
+        >
+          Annuler
+        </md-button>
+        <md-button
+          class="md-accent"
+          @click="deleteApplication()"
+        >
           <md-icon>delete</md-icon>
           Supprimer
         </md-button>
-        <md-button class="md-primary" @click="close()">Annuler </md-button>
       </md-dialog-actions>
     </md-dialog>
   </div>
 </template>
 
 <script>
+import { applicationsService } from "../../../_services/applications.service";
 export default {
   name: "DeleteApplication",
   props: {
-    policy: {
+    app: {
       type: Object,
       required: true,
       default: () => ({})
@@ -55,28 +71,38 @@ export default {
   },
   data: () => ({
     userInput: "",
+    refreshApps: false,
     showDialog: false,
     error: false
   }),
-  methods: {
-    deletePolicy() {
-      if (this.userInput != this.device.name) {
-        this.error = true;
-        console.log("error");
-      } else {
-        console.log("success");
-      }
-    },
-    close() {
-      this.userInput = "";
-      this.error = false;
-    }
-  },
   computed: {
     messageClass() {
       return {
         "md-invalid": this.error
       };
+    }
+  },
+  watch: {
+    refreshApps() {
+      if (this.refreshApps) {
+        document.getElementById("refreshAppsBtn").click();
+      }
+    }
+  },
+  methods: {
+    deleteApplication() {
+      if (this.userInput != this.app.name) {
+        this.error = true;
+      } else {
+        applicationsService.deleteApplication(this.app).then(res => {
+          this.refreshApps = true;
+          this.showDialog = false;
+        });
+      }
+    },
+    close() {
+      this.userInput = "";
+      this.error = false;
     }
   }
 };

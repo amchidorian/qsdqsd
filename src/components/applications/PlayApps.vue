@@ -1,12 +1,35 @@
 <template>
   <div class="md-layout md-gutter">
-    <AddApp :type="'play'" />
-    <div
-      class="md-layout-item  md-size-20 md-medium-size-25 md-small-size-50 md-xsmall-size-100 columnPolicies"
-      v-for="(app, index) in apps"
-      :key="index"
+    <md-empty-state
+      v-if="apps.length == 0"
+      md-icon="apps"
+      md-label="Aucune Application du PlayStore n'a été enregistré."
+      md-description="En les enregistrant, vous pourrez les assignants à un groupe permettant de les installer automatiquement sur les appareils associés."
     >
-      <ApplicationsPlayAppCard :app="app" />
+      <AddApp
+        style="height: 100%;"
+        :empty="true"
+        :type="'play'"
+      />
+    </md-empty-state>
+    <div
+      v-if="apps.length > 0"
+      class="md-layout md-gutter md-layout-item md-size-100 "
+    >
+      <AddApp
+        :type="'play'"
+        :empty="false"
+        md-dynamic-height
+        style="margin-bottom: 20px;"
+        class="md-layout-item md-size-20 md-medium-size-20 md-small-size-50 md-xsmall-size-100"
+      />
+      <div
+        v-for="(app, index) in apps"
+        :key="index"
+        class="md-layout-item md-size-20 md-medium-size-20 md-small-size-50 md-xsmall-size-100"
+      >
+        <ApplicationsPlayAppCard :app="app" />
+      </div>
     </div>
   </div>
 </template>

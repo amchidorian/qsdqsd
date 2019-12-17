@@ -5,50 +5,59 @@
     </md-button>
 
     <md-dialog class="" :md-active.sync="showDialog" @md-closed="close()">
-      <md-dialog-title class="headerDialogEditDevice"
-        >Modification de l'Appareil : {{ device.name }}
+      <md-dialog-title class="headerDialogEditDevice">
+        Modification de l'Appareil : {{ device.name }}
       </md-dialog-title>
-
       <div class="md-layout md-gutter md-alignment-top-center">
         <div class="md-layout-item md-size-90">
           <md-chip v-if="error" class="editDeviceWarning">
             <md-icon>warning</md-icon>
             Le device n'a pas été modifié.
           </md-chip>
-          <md-field :class="nameError">
+          <md-field>
             <label>Nom de l'Appareil :</label>
-            <md-input v-model="name" @click="cancelError()"></md-input>
+            <md-input
+              v-model="name"
+              :placeholder="device.name"
+              @click="cancelError()"
+            />
             <span class="md-error">Les noms ne correspondent pas.</span>
           </md-field>
           <div class="md-layout-item">
             <md-field>
               <label>Magasin :</label>
               <md-select
-                v-model="store"
-                name="Magasin"
                 id="magasin"
+                v-model="store"
+                :placeholder="device.magasin.city"
+                name="Magasin"
                 @click="cancelError()"
               >
-                <md-option value="device.magasin.city">Australia</md-option>
-                <md-option value="brazil">Brazil</md-option>
-                <md-option value="japan">Japan</md-option>
-                <md-option :value="device.magasin.city"
-                  >United States</md-option
+                <md-option
+                  :value="item.value"
+                  v-for="(item, index) in stores"
+                  v-bind:key="index"
                 >
+                  {{ item.text }}
+                </md-option>
               </md-select>
             </md-field>
             <md-field>
-              <label>Restriction :</label>
+              <label>Groupe :</label>
               <md-select
-                v-model="name"
-                name="restriction"
                 id="restriction"
+                :placeholder="device.policy"
+                v-model="groupe"
+                name="restriction"
                 @click="cancelError()"
               >
-                <md-option value="australia">Australia</md-option>
-                <md-option :value="device.policy">Brazil</md-option>
-                <md-option value="japan">Japan</md-option>
-                <md-option value="united-states">United States</md-option>
+                <md-option
+                  :value="item.name"
+                  v-for="(item, index) in groupes"
+                  v-bind:key="index"
+                >
+                  {{ item.name }}
+                </md-option>
               </md-select>
             </md-field>
           </div>
@@ -56,10 +65,11 @@
       </div>
 
       <md-dialog-actions>
-        <md-button @click="close()">Annuler </md-button>
-        <md-button class="md-primary" @click="deleteDevice()">
-          <md-icon>edit</md-icon>
-          Editer
+        <md-button @click="close()">
+          Annuler
+        </md-button>
+        <md-button class="md-primary" @click="updateDevice()">
+          Valider
         </md-button>
       </md-dialog-actions>
     </md-dialog>
@@ -67,6 +77,9 @@
 </template>
 
 <script>
+import { storesService } from "../../../_services/stores.service";
+import { devicesService } from "../../../_services/devices.service";
+import { groupesService } from "../../../_services/groupes.service";
 export default {
   name: "DeleteDevice",
   props: {
@@ -78,49 +91,60 @@ export default {
   },
   data: () => ({
     showDialog: false,
-    errorName: false,
     name: null,
     store: null,
-    policy: null,
+    groupe: null,
+    stores: [],
+    groupes: [],
     error: false
   }),
+  computed: {},
+  created: function() {
+    storesService.getStores().then(res => {
+      this.stores = [];
+      console.log(res);
+      for (const i in res) {
+        const mag = {
+          key: res[i].id,
+          text: res[i].city,
+          value: res[i]
+        };
+        this.stores.push(mag);
+      }
+    });
+    groupesService.getGroupes().then(res => {
+      this.groupes = res;
+    });
+  },
   methods: {
-    deleteDevice() {
-      if (
-        this.name == this.device.name &&
-        this.policy == this.device.policy &&
-        this.store == this.device.magasin.city
-      ) {
+    updateDevice() {
+      var updatedDevice = {};
+      if (this.name == null && this.groupe == null && this.store == null) {
         this.error = true;
-        console.log("error");
       } else {
-        console.log("success");
+        updatedDevice.id = this.device.id;
+        if (this.name != null) {
+          updatedDevice.name = this.name;
+        }
+        if (this.groupe != null) {
+          updatedDevice.groupe = this.groupe;
+        }
+        if (this.store != null) {
+          updatedDevice.store = this.store;
+        }
+        devicesService
+          .updateDevice(updatedDevice)
+          .then(res => console.log(res));
       }
     },
     close() {
       this.userInput = "";
       this.error = false;
-      this.name = JSON.parse(JSON.stringify(this.device.name));
-      this.policy = JSON.parse(JSON.stringify(this.device.policy));
-      this.store = JSON.parse(JSON.stringify(this.device.magasin.city));
     },
     cancelError() {
-      console.log("cancelError");
       this.errorName = false;
       this.error = false;
     }
-  },
-  computed: {
-    nameError() {
-      return {
-        "md-invalid": this.errorName
-      };
-    }
-  },
-  created: function() {
-    this.name = JSON.parse(JSON.stringify(this.device.name));
-    this.policy = JSON.parse(JSON.stringify(this.device.policy));
-    this.store = JSON.parse(JSON.stringify(this.device.magasin.city));
   }
 };
 </script>
